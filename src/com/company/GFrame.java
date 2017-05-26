@@ -30,7 +30,7 @@ public class GFrame extends JFrame{
         setPreferredSize(new Dimension(gPanel.getGPanelSize(), gPanel.getGPanelSize() + 52));
         pack();
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setVisible(true);
         setResizable(false);
     }
@@ -60,15 +60,15 @@ public class GFrame extends JFrame{
         signModeItem = new JRadioButtonMenuItem("Цифры");
         optionsMenu.add(signModeItem);
 
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(imageModeItem);
+        buttonGroup.add(signModeItem);
+
         imageModeItem.addActionListener(e -> {
-            signModeItem.setSelected(false);
-            imageModeItem.setSelected(true);
-            gPanel.switchMode();
+            gPanel.setGameModeAndRepaint(1);
         });
         signModeItem.addActionListener(e -> {
-            imageModeItem.setSelected(false);
-            signModeItem.setSelected(true);
-            gPanel.switchMode();
+            gPanel.setGameModeAndRepaint(2);
         });
 
         newGameItem.addActionListener(e -> {
@@ -79,7 +79,7 @@ public class GFrame extends JFrame{
         aboutProgramm = new JMenuItem("О программе");
         helpMenu.add(aboutProgramm);
 
-        aboutProgramm.addActionListener(e -> showProgrammInfo());
+        aboutProgramm.addActionListener(e -> showProgramInfo());
     }
 
     void setRadioEnabled(boolean enabled) {
@@ -87,7 +87,7 @@ public class GFrame extends JFrame{
         signModeItem.setEnabled(enabled);
     }
 
-    private void showProgrammInfo() {
+    private void showProgramInfo() {
         JOptionPane.showMessageDialog(this, "Программа создана в рамках курса \"Технологии программирования\"");
     }
 }

@@ -3,6 +3,8 @@ package com.company;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
@@ -53,6 +55,8 @@ public class GPanel extends JPanel{
 
             initCells();
 
+            setFocusable(true);
+
             addMouseListener(new MouseAdapter() {
 
                 @Override
@@ -71,10 +75,49 @@ public class GPanel extends JPanel{
                 }
             });
 
+            addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    if (firstClick) {
+                        mixCells();
+                        gFrame.setRadioEnabled(false);
+                        firstClick = false;
+                        return;
+                    }
+
+                    switch (e.getKeyCode()) {
+                        // выбор направления
+                        case KeyEvent.VK_UP:
+                            keyPressedAction(0, 1);
+                            break;
+                        case KeyEvent.VK_DOWN:
+                            keyPressedAction(0, -1);
+                            break;
+                        case KeyEvent.VK_LEFT:
+                            keyPressedAction(1, 0);
+                            break;
+                        case KeyEvent.VK_RIGHT:
+                            keyPressedAction(-1, 0);
+                            break;
+                    }
+                }
+            });
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    private void keyPressedAction(int dx, int dy) {
+        int y = (int) freeSpaceCoordinate.getY() + dy;
+        int x = (int) freeSpaceCoordinate.getX() + dx;
+
+        if (x < 0 || y > 3 || x > 3 || y < 0)
+            return;
+        moveToFreeSpace(new Point(x, y));
+        checkWin();
+    }
+
     /* Действие на нажатие */
     private void mousePressAction(Point point) {
         int x = (int) point.getX(), y = (int) point.getY(),
@@ -198,17 +241,8 @@ public class GPanel extends JPanel{
         return GCell.CELL_SIZE * 4;
     }
     /* Изменить mod */
-    public void switchMode() {
-        switch (gameMode) {
-            case 1: {
-                gameMode = 2;
-                break;
-            }
-            case 2: {
-                gameMode = 1;
-                break;
-            }
-        }
+    public void setGameModeAndRepaint(int gameMode) {
+        this.gameMode = gameMode;
         repaint();
     }
     /* Может ли клетка быть перемещена на свободную позицию */
